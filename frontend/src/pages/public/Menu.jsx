@@ -1,12 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { getfoods } from '../../api/food.service';
+import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { add } from '../../redux/features/cartSlice';
 
 const Menu = () => {
+  const dispatch = useDispatch();
+  const cart = useSelector((state)=>state.cart.cartItems);
+  console.log(cart);
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["foods"],
     queryFn: getfoods,
   });
+
+  const navigate = useNavigate();
 
   // Loading State
   if (isPending) {
@@ -48,6 +56,7 @@ const Menu = () => {
               <img 
                 src={food.photo} 
                 alt={food.name} 
+                onClick={() => navigate(`/menu/${food._id}`,{state:food})}
                 className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
               />
             </div>
@@ -68,8 +77,14 @@ const Menu = () => {
                 <span className="text-xl font-extrabold text-orange-600">
                   RS. {food.price}
                 </span>
-                <button className="rounded-xl bg-orange-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-orange-600 transition-colors">
-                  Order Now
+                <button 
+                  className="rounded-xl bg-orange-500 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-orange-600 transition-colors"
+                  onClick ={()=>{
+                    dispatch(add(food));
+                  }}
+                 
+                >
+                  Add To Cart
                 </button>
               </div>
             </div>

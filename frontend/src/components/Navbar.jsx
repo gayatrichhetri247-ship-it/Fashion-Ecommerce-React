@@ -42,12 +42,15 @@ const Navbar = () => {
         </NavLink>
 
         {user && isAuthenticated ? (
+          <> <NavLink to="/cart" className={linkStyles}>
+              Cart
+            </NavLink>
           <button
             onClick={handleLogout}
             className="ml-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-gray-900"
           >
             Logout
-          </button>
+          </button> </>
         ) : (
           <>
             <NavLink to="/login" className={linkStyles}>

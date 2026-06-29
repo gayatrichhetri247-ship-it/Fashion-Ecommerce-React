@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ConnectDB = async() =>{
     try{
-        await mongoose.connect("mongodb://localhost:27017/ecommerce")
+        await mongoose.connect("mongodb://localhost:27017/ecommerce-fashion")
         console.log("Database connected successfully");
     }
     catch(err){

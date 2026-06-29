@@ -4,13 +4,13 @@ const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
     },
-    foods: [
+    products: [
       {
-        foodId: {
+        productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "food",
+          ref: "product",
         },
         quantity: {
           type: Number,

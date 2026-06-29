@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Dresses",
+    "image":"/products/dresses/spring-dress.jpg",
+    "link": "/products?category=DRESSES"
+
+  },
+   {
+    "id": 2,
+    "title": "pants",
+    "image": "/products/pants/highwaistkoreanpant.jpg",
+    "link": "/products?category=PANTS"
+
+  },
+
+  {
+    "id": 3,
+    "title": "Tops",
+    "image": "/products/tops/sideknottop.jpg",
+    "link": "/products?category=ROPS"
+  
+  },
+  {
+    "id": 4,
+    "title": "Skirts",
+    "image": "/products/skirts/ruffleminiskirt.jpg",
+    "link": "/products?category=SKIRTS"
+
+  },
+  {
+    "id": 5,
+    "title": "Accessories",
+    "image": "/products/accessories/butterflyarm.jpg",
+    "link": "/products?category=ACCESSORIES"
+   
+  }
+]

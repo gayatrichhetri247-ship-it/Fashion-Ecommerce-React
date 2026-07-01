@@ -10,11 +10,14 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(cors({
     origin:process.env.CORS_ORIGIN,
+    
     credentials:true,
+    
 })
 ),
 app.use("/api/users", userRoutes)
 app.use("/api/products", productRoutes )
 app.use("/api/orders", orderRoutes)
+console.log(process.env.CORS_ORIGIN);
 
 export default app;

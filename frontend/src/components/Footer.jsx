@@ -48,9 +48,7 @@ const Footer = () => {
           <NavLink to="/size-guide" className="hover:text-pink-600 hover:translate-x-1 transition-all duration-200">Size Guide</NavLink>
           <NavLink to="/track-order" className="hover:text-pink-600 hover:translate-x-1 transition-all duration-200">Track My Order</NavLink>
           <NavLink to="/contact" className="hover:text-pink-600 hover:translate-x-1 transition-all duration-200">Contact Us</NavLink>
-          <NavLink to="/admin/adminlogin" className="mt-2 hover:text-pink-600 hover:scale-105 origin-left transition-all duration-200 font-medium inline-flex items-center gap-1">
-            🛠️ Owner Dashboard
-          </NavLink>
+       
         </div>
 
         {/* Newsletter Section */}

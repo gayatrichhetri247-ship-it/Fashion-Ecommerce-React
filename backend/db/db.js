@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ConnectDB = async() =>{
     try{
-        await mongoose.connect("mongodb://localhost:27017/ecommerce-fashion")
+        await mongoose.connect(process.env.MONGODB_URI)
         console.log("Database connected successfully");
     }
     catch(err){

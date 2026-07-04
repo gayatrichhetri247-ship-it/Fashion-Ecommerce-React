@@ -6,17 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion"; // 1. Import Framer Motion
 
 const SignUp = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+
   const user = useSelector((state) => state.auth);
   console.log(user);
-
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false); // Track async loading state
 
   const handleChange = (e) => {
     setFormData({
@@ -28,15 +27,12 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setIsLoading(true);
       const res = await signUpUser(formData);
       dispatch(AuthSuccess(res.user));
       console.log(res);
       navigate("/");
     } catch (error) {
-      console.error("Sign up failed:", error);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 

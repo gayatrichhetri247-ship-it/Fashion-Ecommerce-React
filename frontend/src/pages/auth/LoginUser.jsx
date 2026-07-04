@@ -15,7 +15,6 @@ const LoginUser = () => {
     email: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false); // Track loading state
 
   const handleChange = (e) => {
     setFormData({
@@ -26,16 +25,20 @@ const LoginUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      setIsLoading(true);
       const res = await loginUser(formData);
+      console.log("Login Response:", res);
+
       dispatch(AuthSuccess(res.user));
-      console.log(res);
-      navigate("/");
+
+      if (res.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
-      console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
+      console.error(error);
     }
   };
 

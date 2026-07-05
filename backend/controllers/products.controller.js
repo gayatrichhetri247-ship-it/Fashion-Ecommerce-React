@@ -1,17 +1,33 @@
-
 import productModel from "../src/models/products.model.js";
 import uploadOnCloudinary from "../src/utils/cloudinary.js";
 import { success } from "./order.controller.js";
 
+import fs from "fs";
 
 export const createproduct = async (req, res) => {
   try {
-    const { name, description, price, oldPrice, category, ratings, reviewsCount } = req.body;
+    const { name, description, price } = req.body;
+
+    console.log("req.file:", req.file);
+
+    if (req.file) {
+      console.log("File exists:", fs.existsSync(req.file.path));
+      console.log("File path:", req.file.path);
+    }
 
     let url = null;
+
     if (req.file) {
-      const res = await uploadOnCloudinary(req.file.path);
-      url = res.secure_url;
+      const result = await uploadOnCloudinary(req.file.path);
+
+      if (!result) {
+        return res.status(500).json({
+          success: false,
+          message: "Cloudinary upload failed",
+        });
+      }
+
+      url = result.secure_url;
     }
 
     const product = await productModel.create({
@@ -24,39 +40,34 @@ export const createproduct = async (req, res) => {
       reviewsCount,
       photo: url,
     });
+
     res.status(201).json({
-      message: "product created",
       success: true,
+      message: "product created",
       product,
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
-      message: "internal server error",
       success: false,
+      message: error.message,
     });
   }
 };
 
-export const getproduct = async (req, res) => {
+export const getproducts = async (req, res) => {
   try {
     const products = await productModel.find();
 
-    if (products.length === 0) {
-      return res.status(404).json({
-        message: "product not found",
-        success: false,
-      });
-    }
-
-    res.status(200).json({
-      message: "products fetched successfully",
+    return res.status(200).json({
       success: true,
       products,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Internal server error",
+    return res.status(500).json({
       success: false,
+      message: "Internal server error",
     });
   }
 };
@@ -64,7 +75,7 @@ export const deleteproduct = async (req, res) => {
   try {
     const id = req.params.id;
     await productModel.findByIdAndDelete(id);
-    res.status(200).json({
+    return res.status(200).json({
       message: "product deleted",
       success: true,
     });

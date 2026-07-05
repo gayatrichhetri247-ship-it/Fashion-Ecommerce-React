@@ -17,7 +17,7 @@ export const ProductProvider = ({ children }) => {
       try {
         setLoading(true);
 
-        const response = await axios.get(`${API_URL}/api/products`);
+        const response = await axios.get(`${API_URL}/products`);
 
         const formattedProducts = response.data.map((item) => ({
           ...item,
@@ -42,7 +42,7 @@ export const ProductProvider = ({ children }) => {
   const addProduct = async (productData) => {
     try {
       const response = await axios.post(
-        `${API_URL}/api/products`,
+        `${API_URL}/products`,
         productData
       );
 
@@ -62,7 +62,7 @@ export const ProductProvider = ({ children }) => {
   // Delete product
   const removeProduct = async (id) => {
     try {
-      await axios.delete(`${API_URL}/api/products/${id}`);
+      await axios.delete(`${API_URL}/products/${id}`);
 
       setProducts((prev) =>
         prev.filter((p) => String(p.id) !== String(id))

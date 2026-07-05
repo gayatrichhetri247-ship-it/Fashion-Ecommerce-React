@@ -1,6 +1,6 @@
 import React from "react";
 import CryptoJS from "crypto-js";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation, Navigate } from "react-router";
 
 const Payment = () => {
   const { state } = useLocation();

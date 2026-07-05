@@ -1,12 +1,12 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import app from "./app.js";
 import ConnectDB from "./db/db.js";
+import dotenv from "dotenv"
+dotenv.config();
 
-console.log(process.env.MONGODB_URI);
+
 ConnectDB()
   .then(() => {
+    console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
     app.listen(process.env.PORT || 5000, () => {
       console.log("Server is running");
     });

@@ -12,8 +12,8 @@ app.use(cors({
     origin:process.env.CORS_ORIGIN,
     credentials:true,
 }));
-app.use("/users", userRoutes)
-app.use("/products", productRoutes)
-app.use("/orders", orderRoutes)
+app.use("/api/users", userRoutes)
+app.use("/api/products", productRoutes)
+app.use("/api/orders", orderRoutes)
 
 export default app;

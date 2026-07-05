@@ -3,10 +3,9 @@ import { signUpUser } from "../../api/auth.service";
 import { useNavigate, Link } from "react-router";
 import { AuthSuccess } from "../../redux/features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion"; // 1. Import Framer Motion
 
 const SignUp = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const user = useSelector((state) => state.auth);
   console.log(user);
@@ -37,16 +36,8 @@ const SignUp = () => {
   };
 
   return (
-    // Responsive container: uses min-h-screen to ensure full coverage and centers items cleanly
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-pink-100 via-yellow-50 to-pink-100 px-4 py-8 sm:px-6 lg:px-8">
-      
-      {/* 2. Added entry motion animation matching the Login page */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-md space-y-8 rounded-2xl bg-gradient-to-r from-pink-200 via-green-50 to-pink-100 p-6 sm:p-10 md:p-12 shadow-xl"
-      >
+    <div className="flex min-h-screen items-center justify-center bg-emerald-50/50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-xl border border-green-100">
         {/* Header */}
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -54,7 +45,7 @@ const SignUp = () => {
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="font-medium text-pink-600 hover:text-pink-400 transition-colors">
+            <Link to="/login" className="font-medium text-emerald-600 hover:text-emerald-500 transition-colors">
               Sign in
             </Link>
           </p>
@@ -75,7 +66,7 @@ const SignUp = () => {
                 required
                 value={formData.fullname}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm transition-all"
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-green-300 sm:text-sm transition-all"
                 placeholder="John Doe"
               />
             </div>
@@ -93,7 +84,7 @@ const SignUp = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm transition-all"
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-green-300 sm:text-sm transition-all"
                 placeholder="you@example.com"
               />
             </div>
@@ -111,7 +102,7 @@ const SignUp = () => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:text-sm transition-all"
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-green-300 sm:text-sm transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -119,19 +110,15 @@ const SignUp = () => {
 
           {/* Submit Button */}
           <div>
-            {/* 3. Replaced standard button with motion.button for satisfying active touch/click feedback */}
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               type="submit"
-              disabled={isLoading}
-              className="group relative flex w-full justify-center rounded-lg bg-pink-600 px-4 py-3 text-sm font-semibold text-white hover:bg-pink-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-600 shadow-md hover:shadow-lg transition-all disabled:opacity-70"
+              className="group relative flex w-full justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
             >
-              {isLoading ? "Signing up..." : "Sign Up"}
-            </motion.button>
+              Sign Up
+            </button>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 };

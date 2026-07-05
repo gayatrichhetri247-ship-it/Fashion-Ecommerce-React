@@ -104,7 +104,7 @@ const Cart = () => {
             </p>
             <NavLink to="/products">
               <button className="mt-6 rounded-xl bg-pink-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-pink-500 transition-all cursor-pointer">
-                Browse Menu
+                Explore Products
               </button>
             </NavLink>
           </div>

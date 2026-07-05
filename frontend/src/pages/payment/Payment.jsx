@@ -1,39 +1,47 @@
 import React from "react";
 import CryptoJS from "crypto-js";
-import { useLocation } from "react-router";
+import { useLocation, Navigate } from "react-router";
 
 const Payment = () => {
-  const location = useLocation();
+  const { state } = useLocation();
 
-  const total_amount = location?.state?.total_amount;
-  const transaction_uuid = location?.state?.orderId;
+  const total_amount = state?.total_amount;
+  const transaction_uuid = state?.orderId;
 
-  const hash = CryptoJS.HmacSHA256(
-    `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=EPAYTEST`,
-    import.meta.env.VITE_ESEWA_SECRET_KEY
+  if (!total_amount || !transaction_uuid) {
+    return <Navigate to="/" replace />;
+  }
+
+  const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=EPAYTEST`;
+
+  const signature = CryptoJS.enc.Base64.stringify(
+    CryptoJS.HmacSHA256(
+      message,
+      import.meta.env.VITE_ESEWA_SECRET_KEY
+    )
   );
-
-  const signature = CryptoJS.enc.Base64.stringify(hash);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-pink-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-gradient-to-br from-pink-200 via-yellow-50 to-pink-200 shadow-xl rounded-xl p-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-pink-600">eSewa Payment</h1>
-          <p className="text-gray-500 mt-2">
-            Complete your payment securely
-          </p>
-        </div>
+      <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
 
-        <div className="my-8 border rounded-lg p-4 bg-pink-50">
-          <div className="flex justify-between text-lg">
-            <span className="font-medium">Total Amount</span>
-            <span className="font-bold text-pink-700">
+        <h1 className="text-3xl font-bold text-center text-pink-600">
+          eSewa Payment
+        </h1>
+
+        <p className="text-center text-gray-500 mt-2">
+          Complete your payment securely
+        </p>
+
+        <div className="mt-8 bg-pink-50 rounded-lg p-4 border">
+          <div className="flex justify-between">
+            <span className="font-semibold">Amount</span>
+            <span className="font-bold text-pink-600">
               Rs. {total_amount}
             </span>
           </div>
 
-          <div className="flex justify-between mt-3 text-sm text-gray-600">
+          <div className="flex justify-between mt-3 text-sm">
             <span>Order ID</span>
             <span>{transaction_uuid}</span>
           </div>
@@ -42,77 +50,89 @@ const Payment = () => {
         <form
           action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
           method="POST"
+          className="mt-8"
         >
-          {/* Hidden Fields */}
           <input
             type="hidden"
             name="amount"
-            defaultValue={total_amount}
+            value={total_amount}
+            readOnly
           />
 
           <input
             type="hidden"
             name="tax_amount"
-            defaultValue="0"
+            value="0"
+            readOnly
           />
 
           <input
             type="hidden"
             name="total_amount"
-            defaultValue={total_amount}
+            value={total_amount}
+            readOnly
           />
 
           <input
             type="hidden"
             name="transaction_uuid"
-            defaultValue={transaction_uuid}
+            value={transaction_uuid}
+            readOnly
           />
 
           <input
             type="hidden"
             name="product_code"
-            defaultValue="EPAYTEST"
+            value="EPAYTEST"
+            readOnly
           />
 
           <input
             type="hidden"
             name="product_service_charge"
-            defaultValue="0"
+            value="0"
+            readOnly
           />
 
           <input
             type="hidden"
             name="product_delivery_charge"
-            defaultValue="0"
+            value="0"
+            readOnly
           />
 
+          {/* CHANGE THIS TO YOUR DEPLOYED BACKEND */}
           <input
             type="hidden"
             name="success_url"
-            defaultValue="http://localhost:5000/api/orders/success"
+            value="https://fashion-ecommerce-react.onrender.com/api/orders/success"
+            readOnly
           />
 
           <input
             type="hidden"
             name="failure_url"
-            defaultValue="https://developer.esewa.com.np/failure"
+            value="https://developer.esewa.com.np/failure"
+            readOnly
           />
 
           <input
             type="hidden"
             name="signed_field_names"
-            defaultValue="total_amount,transaction_uuid,product_code"
+            value="total_amount,transaction_uuid,product_code"
+            readOnly
           />
 
           <input
             type="hidden"
             name="signature"
-            defaultValue={signature}
+            value={signature}
+            readOnly
           />
 
           <button
             type="submit"
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition duration-300 cursor-pointer"
+            className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-semibold transition"
           >
             Pay with eSewa
           </button>

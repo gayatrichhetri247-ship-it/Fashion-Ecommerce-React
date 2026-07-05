@@ -8,10 +8,9 @@ export const ProductProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Backend URL from .env
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch products
+  // Fetch Products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -19,17 +18,17 @@ export const ProductProvider = ({ children }) => {
 
         const response = await axios.get(`${API_URL}/products`);
 
-        const formattedProducts = response.data.map((item) => ({
+        const formattedProducts = response.data.products.map((item) => ({
           ...item,
-          id: String(item._id || item.id),
+          id: item._id,
           category: item.category?.toLowerCase() || "uncategorized",
         }));
 
         setProducts(formattedProducts);
         setError(null);
       } catch (err) {
-        console.error("Failed to fetch products from database:", err);
-        setError("Could not load products. Please try again later.");
+        console.error("Failed to fetch products:", err);
+        setError("Could not load products.");
       } finally {
         setLoading(false);
       }
@@ -38,37 +37,50 @@ export const ProductProvider = ({ children }) => {
     fetchProducts();
   }, [API_URL]);
 
-  // Add product
+  // Add Product
   const addProduct = async (productData) => {
     try {
       const response = await axios.post(
-        `${API_URL}/products`,
-        productData
+        `${API_URL}/products/create`,
+        productData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
-      const newProduct = {
-        ...response.data,
-        id: String(response.data._id || response.data.id),
-        category: response.data.category?.toLowerCase() || "uncategorized",
-      };
+      const product = response.data.product;
 
-      setProducts((prev) => [...prev, newProduct]);
+      setProducts((prev) => [
+        ...prev,
+        {
+          ...product,
+          id: product._id,
+          category: product.category?.toLowerCase() || "uncategorized",
+        },
+      ]);
+
+      return response.data;
     } catch (err) {
-      console.error("Error adding product to database:", err);
+      console.error("Failed to create product:", err.response?.data || err);
       throw err;
     }
   };
 
-  // Delete product
+  // Delete Product
   const removeProduct = async (id) => {
     try {
-      await axios.delete(`${API_URL}/products/${id}`);
+      await axios.delete(`${API_URL}/products/${id}`, {
+        withCredentials: true,
+      });
 
       setProducts((prev) =>
-        prev.filter((p) => String(p.id) !== String(id))
+        prev.filter((product) => product._id !== id)
       );
     } catch (err) {
-      console.error("Error removing product from database:", err);
+      console.error("Failed to delete product:", err.response?.data || err);
       throw err;
     }
   };
@@ -92,7 +104,7 @@ export const useProducts = () => {
   const context = useContext(ProductContext);
 
   if (!context) {
-    throw new Error("useProducts must be used within a ProductProvider");
+    throw new Error("useProducts must be used within ProductProvider");
   }
 
   return context;

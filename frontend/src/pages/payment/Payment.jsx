@@ -20,6 +20,10 @@ const Payment = () => {
       import.meta.env.VITE_ESEWA_SECRET_KEY
     )
   );
+  console.log("Total Amount:", total_amount);
+console.log("Transaction UUID:", transaction_uuid);
+console.log("Message:", message);
+console.log("Signature:", signature);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-pink-50 flex items-center justify-center px-4">

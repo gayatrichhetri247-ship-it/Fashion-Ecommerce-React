@@ -17,11 +17,28 @@ const Products = () => {
 
   const navigate = useNavigate();
 
-  // State for search and category filters
+  // State for search, category filters, and active alerts
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [alerts, setAlerts] = useState([]);
 
   const categories = ["All", "Dresses", "Tops", "Pants", "Skirts", "Accessories"];
+
+  // Handler to add product to cart and trigger custom popup alert
+  const handleAddToCart = (product) => {
+    dispatch(add(product));
+    
+    // Create a unique id for the toast alert instance
+    const id = Date.now();
+    const newAlert = { id, name: product.name };
+    
+    setAlerts((prev) => [...prev, newAlert]);
+    
+    // Automatically clear individual alert bubble after 3 seconds
+    setTimeout(() => {
+      setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+    }, 3000);
+  };
 
   // Loading State with Spinner Animation
   if (isPending) {
@@ -64,8 +81,36 @@ const Products = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-pink-100 via-rose-50 to-amber-100 pb-16 antialiased selection:bg-pink-200">
+    <div className="min-h-screen bg-gradient-to-tr from-pink-100 via-yellow-50 to-pink-100 pb-16 antialiased selection:bg-pink-200">
       
+      {/* Floating Popup Alerts Stack Container */}
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full px-4 sm:px-0">
+        {alerts.map((alert) => (
+          <div
+            key={alert.id}
+            className="flex items-center gap-3 bg-slate-900/95 text-white backdrop-blur-md px-4 py-3.5 rounded-xl shadow-2xl border border-white/10 animate-fade-in-up transform transition-all duration-300"
+          >
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-pink-500 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-[11px] font-bold tracking-wider text-pink-400 uppercase">Added to Cart!</p>
+              <p className="text-xs text-slate-200 line-clamp-1 font-medium mt-0.5">{alert.name}</p>
+            </div>
+            <button 
+              onClick={() => setAlerts((prev) => prev.filter((a) => a.id !== alert.id))}
+              className="text-slate-400 hover:text-white transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        ))}
+      </div>
+
       {/* Header Banner Section */}
       <div className="flex flex-col items-center justify-center pt-12 pb-8 text-center px-4">
         <div className="text-pink-600 bg-white/60 p-4 rounded-2xl shadow-sm border border-pink-200/40 backdrop-blur-xs mb-4 transform hover:scale-105 hover:rotate-3 transition-all duration-300">
@@ -151,12 +196,10 @@ const Products = () => {
                   className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105 cursor-pointer"
                 />
 
-                {/* Micro-Interaction: Modern Image Gradient Edge Mask */}
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 via-transparent to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
-                {/* Dynamic Trend Tag overlaying Image */}
                 {product.oldPrice && (
-                  <div className="absolute top-3 left-3 bg-pink-600 text-[10px] tracking-widest uppercase font-black text-white px-2.5 py-1 rounded-lg shadow-md animate-pulse">
+                  <div className="absolute top-3 left-3 bg-pink-600 text-[10px] tracking-widest uppercase font-black text-white px-2.5 py-1 rounded-lg shadow-md">
                     Sale
                   </div>
                 )}
@@ -165,8 +208,6 @@ const Products = () => {
               {/* Card Meta Content Details */}
               <div className="flex flex-1 flex-col p-5 bg-gradient-to-b from-white to-pink-50/10">
                 <div className="flex-1">
-                  
-                  {/* Dynamic Category Tag with Ribbon Design */}
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[10px] uppercase tracking-widest font-black text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md">
                       {product.category || "Premium"}
@@ -176,7 +217,6 @@ const Products = () => {
                     </span>
                   </div>
                   
-                  {/* Product Title */}
                   <h2 
                     onClick={() => navigate(`/product/${product._id}`, { state: product })}
                     className="text-base font-serif font-bold text-gray-900 line-clamp-1 hover:text-pink-600 transition-colors cursor-pointer tracking-tight"
@@ -184,7 +224,6 @@ const Products = () => {
                     {product.name}
                   </h2> 
 
-                  {/* Dynamic Star Rating Block */}
                   <div className="mt-1 flex items-center gap-1 bg-amber-50 border border-amber-100 rounded-md py-0.5 px-1.5 w-fit">
                     <span className="text-amber-500 text-xs font-semibold">★</span>
                     <span className="text-[11px] font-bold text-amber-800">
@@ -211,9 +250,7 @@ const Products = () => {
                   
                   <button
                     className="w-full flex items-center justify-center gap-2 rounded-xl bg-pink-600 py-3 text-xs font-bold tracking-wider uppercase text-white shadow-md shadow-pink-600/20 hover:bg-pink-700 active:scale-[0.96] transition-all duration-300"
-                    onClick={() => {
-                      dispatch(add(product));
-                    }}
+                    onClick={() => handleAddToCart(product)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

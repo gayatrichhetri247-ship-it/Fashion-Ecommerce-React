@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { addproduct } from "../api/products.service";
+import { motion, AnimatePresence } from "framer-motion";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -70,7 +71,6 @@ const AddProduct = () => {
   };
 
   const handleClear = () => {
-    // FIX: Included ratings and reviewsCount to completely clear state
     setFormData({ 
       name: "", 
       category: "", 
@@ -84,20 +84,47 @@ const AddProduct = () => {
     setPreviewUrl("");
   };
 
+  // Animation variants for staggered inputs
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+  };
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-4">
-      <div className="mb-8 border-b border-gray-200 pb-4">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Add New Product Item</h1>
-        <p className="mt-1 text-sm text-gray-500">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="mx-auto max-w-2xl px-6 py-8 my-6 bg-white rounded-2xl shadow-xl shadow-pink-100/50 border border-pink-50"
+    >
+      {/* Header Section */}
+      <div className="mb-8 border-b border-pink-100 pb-5">
+        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-transparent">
+          Add New Product Item
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
           Fill out the details and upload a photo to add this item to the database.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2"
+        >
           {/* Product Name */}
-          <div className="sm:col-span-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
               Product Item Name
             </label>
             <input
@@ -108,13 +135,13 @@ const AddProduct = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="e.g., Summer Floral Dress"
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+              className="mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 placeholder:text-gray-400 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm"
             />
-          </div>
+          </motion.div>
 
           {/* Category Dropdown */}
-          <div className="sm:col-span-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <label htmlFor="category" className="block text-sm font-semibold text-gray-700">
               Category
             </label>
             <select
@@ -123,7 +150,7 @@ const AddProduct = () => {
               required
               value={formData.category}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm bg-white"
+              className="mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm bg-white cursor-pointer"
             >
               <option value="" disabled hidden>Select a category</option>
               {categories.map((cat) => (
@@ -132,16 +159,16 @@ const AddProduct = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </motion.div>
 
           {/* Current Price */}
-          <div className="col-span-1">
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="col-span-1">
+            <label htmlFor="price" className="block text-sm font-semibold text-gray-700">
               Current Price (RS)
             </label>
-            <div className="relative mt-1 rounded-md shadow-sm">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span className="text-sm text-gray-500">RS</span>
+            <div className="relative mt-1.5 rounded-xl shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <span className="text-sm font-medium text-pink-500">RS</span>
               </div>
               <input
                 type="number"
@@ -153,19 +180,19 @@ const AddProduct = () => {
                 value={formData.price}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="block w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-gray-900 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+                className="block w-full rounded-xl border border-gray-200 py-3 pl-11 pr-4 text-gray-900 transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Old Price */}
-          <div className="col-span-1">
-            <label htmlFor="oldPrice" className="block text-sm font-medium text-gray-700">
-              Old Price (RS) <span className="text-xs text-gray-400">(Optional)</span>
+          <motion.div variants={itemVariants} className="col-span-1">
+            <label htmlFor="oldPrice" className="block text-sm font-semibold text-gray-700">
+              Old Price (RS) <span className="text-xs font-normal text-gray-400">(Optional)</span>
             </label>
-            <div className="relative mt-1 rounded-md shadow-sm">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <span className="text-sm text-gray-500">RS</span>
+            <div className="relative mt-1.5 rounded-xl shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <span className="text-sm font-medium text-gray-400">RS</span>
               </div>
               <input
                 type="number"
@@ -176,14 +203,14 @@ const AddProduct = () => {
                 value={formData.oldPrice}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="block w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-gray-900 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+                className="block w-full rounded-xl border border-gray-200 py-3 pl-11 pr-4 text-gray-900 transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Ratings */}
-          <div className="col-span-1">
-            <label htmlFor="ratings" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="col-span-1">
+            <label htmlFor="ratings" className="block text-sm font-semibold text-gray-700">
               Ratings
             </label>
             <input
@@ -196,14 +223,13 @@ const AddProduct = () => {
               value={formData.ratings}
               onChange={handleChange}
               placeholder="e.g., 4.5"
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+              className="mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm"
             />
-          </div>
+          </motion.div>
 
           {/* Reviews Count */}
-          <div className="col-span-1">
-            {/* FIX: Corrected label to "Reviews Count" and unified layout */}
-            <label htmlFor="reviewsCount" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="col-span-1">
+            <label htmlFor="reviewsCount" className="block text-sm font-semibold text-gray-700">
               Reviews Count
             </label>
             <input
@@ -214,13 +240,13 @@ const AddProduct = () => {
               value={formData.reviewsCount}
               onChange={handleChange}
               placeholder="e.g., 45"
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+              className="mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm"
             />
-          </div>
+          </motion.div>
 
           {/* Description */}
-          <div className="sm:col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <label htmlFor="description" className="block text-sm font-semibold text-gray-700">
               Description
             </label>
             <textarea
@@ -231,22 +257,26 @@ const AddProduct = () => {
               value={formData.description}
               onChange={handleChange}
               placeholder="Detail the item specifications, fabric, sizing..."
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none sm:text-sm"
+              className="mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 shadow-sm transition-all duration-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none sm:text-sm resize-none"
             />
-          </div>
+          </motion.div>
 
           {/* File Upload Input */}
-          <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5">
               Product Photo
             </label>
-            <div className="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-6 hover:border-orange-500 transition-colors bg-white">
-              <div className="space-y-1 text-center">
-                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+            <motion.div 
+              whileHover={{ scale: 1.01, borderColor: "rgb(236, 72, 153)" }}
+              whileTap={{ scale: 0.99 }}
+              className="mt-1 flex justify-center rounded-xl border-2 border-dashed border-pink-200 px-6 py-8 transition-colors bg-pink-50/20 cursor-pointer"
+            >
+              <div className="space-y-2 text-center">
+                <svg className="mx-auto h-12 w-12 text-pink-400 dynamic-pulse" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                   <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4-4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <div className="flex text-sm text-gray-600 justify-center">
-                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-white font-semibold text-orange-600 focus-within:outline-none hover:text-orange-500">
+                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-transparent font-bold text-pink-600 focus-within:outline-none hover:text-pink-500">
                     <span>Upload a file</span>
                     <input 
                       id="file-upload" 
@@ -258,49 +288,64 @@ const AddProduct = () => {
                       onChange={handleFileChange} 
                     />
                   </label>
-                  <p className="pl-1">or drag and drop</p>
+                  <p className="pl-1 text-gray-500">or drag and drop</p>
                 </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                <p className="text-xs text-gray-400">PNG, JPG, GIF up to 5MB</p>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
 
-        {/* Live Image Preview */}
-        {previewUrl && (
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <span className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
-              Selected File Preview
-            </span>
-            <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-md border border-gray-200 bg-white">
-              <img
-                src={previewUrl}
-                alt="Upload preview"
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
-            <p className="mt-1 text-xs text-gray-500 truncate">{formData.photo?.name}</p>
-          </div>
-        )}
+        {/* Live Image Preview with Smooth Presence Animation */}
+        <AnimatePresence>
+          {previewUrl && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -10 }}
+              transition={{ type: "spring", duration: 0.4 }}
+              className="overflow-hidden"
+            >
+              <div className="rounded-xl border border-pink-100 bg-pink-50/30 p-4 mt-2">
+                <span className="block text-xs font-bold uppercase tracking-wider text-pink-500 mb-2">
+                  Selected File Preview
+                </span>
+                <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg border border-pink-100 bg-white shadow-inner">
+                  <img
+                    src={previewUrl}
+                    alt="Upload preview"
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
+                <p className="mt-2 text-xs text-gray-500 truncate font-medium">{formData.photo?.name}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end space-x-3 border-t border-gray-200 pt-5">
-          <button
+        <div className="flex items-center justify-end space-x-3 border-t border-pink-100 pt-6 mt-8">
+          <motion.button
+            whileHover={{ scale: 1.02, backgroundColor: "rgb(255, 241, 242)" }}
+            whileTap={{ scale: 0.98 }}
             type="button"
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="rounded-xl border border-pink-200 bg-white px-5 py-2.5 text-sm font-semibold text-pink-700 shadow-sm transition-all"
             onClick={handleClear}
           >
             Clear Form
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(219, 39, 119, 0.2)" }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
-            className="rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors"
+            disabled={addMutation.isPending}
+            className="rounded-xl bg-gradient-to-r from-pink-600 to-rose-500 px-6 py-2.5 text-sm font-bold text-white shadow-md transition-all flex items-center justify-center disabled:opacity-70"
           >
             {addMutation.isPending ? "Saving..." : "Save Item"}
-          </button>
+          </motion.button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

@@ -50,7 +50,12 @@ export const success = async (req, res) => {
       });
     }
 
-    return res.redirect(`http://localhost:5173/success?id=${transaction_uuid}`);
+   const frontendUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://fashion-ecommerce-react.vercel.app"
+    : "http://localhost:5173";
+
+return res.redirect(`${frontendUrl}/success?id=${transaction_uuid}`);
   } catch (error) {
     console.error(error);
 
@@ -85,6 +90,42 @@ export const getOrders = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+export const updateOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paymentMethod, paymentStatus, orderStatus } = req.body;
+
+    const order = await orderModel.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Update every product in the order
+    order.products = order.products.map((product) => ({
+      ...product.toObject(),
+      paymentMethod,
+      paymentStatus,
+      orderStatus,
+    }));
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order updated successfully",
+      order,
+    });
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

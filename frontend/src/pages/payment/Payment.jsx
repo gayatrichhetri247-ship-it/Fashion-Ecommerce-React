@@ -44,7 +44,7 @@ const Payment = () => {
 
       alert("Order placed successfully.");
 
-      navigate("/payment-success", {
+      navigate("/success", {
         state: {
           orderId: transaction_uuid,
           paymentMethod: "Cash On Delivery",

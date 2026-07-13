@@ -9,9 +9,9 @@ import { clearCart } from "../../redux/features/cartSlice";
 const Success = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const order = data?.order;
   const dispatch = useDispatch();
 
+  // CORRECTED: Declared hook before reading its returned data values
   const { data, isPending, error, isError } = useQuery({
     queryKey: ["order", id],
     queryFn: () => {
@@ -21,11 +21,14 @@ const Success = () => {
     enabled: !!id,
   });
 
+  const order = data?.order;
+
   useEffect(() => {
     if (order?._id) {
       dispatch(clearCart());
     }
   }, [order, dispatch]);
+
   // 1. Loading State
   if (isPending) {
     return (

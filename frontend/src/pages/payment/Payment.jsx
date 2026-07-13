@@ -44,12 +44,8 @@ const Payment = () => {
 
       alert("Order placed successfully.");
 
-      navigate("/success", {
-        state: {
-          orderId: transaction_uuid,
-          paymentMethod: "Cash On Delivery",
-        },
-      });
+      // CORRECTED: Passing data via URL parameters so Success component reads it correctly
+      navigate(`/success?id=${transaction_uuid}`);
     } catch (error) {
       console.error(error);
       alert(

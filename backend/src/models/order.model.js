@@ -26,9 +26,15 @@ const orderSchema = new mongoose.Schema(
             "AMBIGUOUS",
             "NOT_FOUND",
             "CANCELED",
-            "Service is currently unavailable"
+            "Service is currently unavailable",
           ],
-          default:"PENDING",
+          default: "PENDING",
+        },
+
+        orderStatus: {
+          type: String,
+          enum: ["PLACED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
+          default: "PLACED",
         },
       },
     ],

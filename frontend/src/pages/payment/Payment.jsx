@@ -34,7 +34,7 @@ const Payment = () => {
         `${import.meta.env.VITE_API_URL}/orders/${transaction_uuid}`,
         {
           paymentMethod: "Cash On Delivery",
-          paymentStatus: "Pending",
+          paymentStatus: "PENDING",
           orderStatus: "Placed",
         },
         {

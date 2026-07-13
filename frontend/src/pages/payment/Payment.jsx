@@ -264,7 +264,7 @@ const Payment = () => {
           <button
             onClick={handleCashOnDelivery}
             disabled={loading}
-            className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
+            className="w-full mt-6 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
           >
             {loading
               ? "Placing Order..."

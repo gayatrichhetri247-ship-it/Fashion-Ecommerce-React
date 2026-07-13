@@ -50,12 +50,9 @@ export const success = async (req, res) => {
       });
     }
 
-   const frontendUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://fashion-ecommerce-react.vercel.app"
-    : "http://localhost:5173";
-
-return res.redirect(`${frontendUrl}/success?id=${transaction_uuid}`);
+   return res.redirect(
+  `${process.env.CORS_ORIGIN}/success?id=${transaction_uuid}`
+);
   } catch (error) {
     console.error(error);
 

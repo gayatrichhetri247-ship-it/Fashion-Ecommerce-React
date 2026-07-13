@@ -9,7 +9,7 @@ import { clearCart } from "../../redux/features/cartSlice";
 const Success = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-
+  const order = data?.order;
   const dispatch = useDispatch();
 
   const { data, isPending, error, isError } = useQuery({
@@ -69,9 +69,6 @@ const Success = () => {
     );
   }
 
-  // Extract the order object out of your API response safely
-  const order = data?.order;
-
   return (
     <div className="min-h-screen bg-pink-50 px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-lg">
@@ -109,7 +106,7 @@ const Success = () => {
               Order ID: {id?.slice(-8)}
             </span>
             <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-emerald-500/20">
-              {order?.foods?.[0]?.paymentStatus || "PAID"}
+              {order?.products?.[0]?.paymentStatus || "PAID"}
             </span>
           </div>
 
@@ -135,20 +132,20 @@ const Success = () => {
                 Items Ordered
               </h3>
               <ul className="divide-y divide-slate-100">
-                {order?.foods?.map((item) => (
+                {order?.products?.map((item) => (
                   <li
                     key={item._id}
                     className="flex items-center justify-between py-3"
                   >
                     <div className="flex items-center space-x-4">
-                      {/* If you have populated food item image, render it here */}
+                      {/* If you have populated product item image, render it here */}
                       <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
                         🍔
                       </div>
                       <div>
                         {/* Will display the name dynamically once populated backend side */}
                         <p className="text-sm font-medium text-slate-900">
-                          {item.foodId?.name || "Delicious food Item"}
+                          {item.productId?.name || "Delicious product Item"}
                         </p>
                         <p className="text-xs text-slate-400">
                           Qty: {item.quantity}
@@ -156,8 +153,8 @@ const Success = () => {
                       </div>
                     </div>
                     <span className="text-sm font-semibold text-slate-900">
-                      {item.foodId?.price
-                        ? `RS.${(item.foodId.price * item.quantity).toFixed(2)}`
+                      {item.productId?.price
+                        ? `RS.${(item.productId.price * item.quantity).toFixed(2)}`
                         : "--"}
                     </span>
                   </li>

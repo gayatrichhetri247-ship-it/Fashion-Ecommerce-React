@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import CryptoJS from "crypto-js";
-import { useLocation, Navigate } from "react-router";
+import { useLocation, Navigate, useNavigate } from "react-router";
+import axios from "axios";
 
 const Payment = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   const total_amount = state?.total_amount;
   const transaction_uuid = state?.orderId;
+
+  const [paymentMethod, setPaymentMethod] = useState("esewa");
+  const [loading, setLoading] = useState(false);
 
   if (!total_amount || !transaction_uuid) {
     return <Navigate to="/" replace />;
@@ -20,127 +25,254 @@ const Payment = () => {
       import.meta.env.VITE_ESEWA_SECRET_KEY
     )
   );
-  console.log("Total Amount:", total_amount);
-console.log("Transaction UUID:", transaction_uuid);
-console.log("Message:", message);
-console.log("Signature:", signature);
+
+  const handleCashOnDelivery = async () => {
+    try {
+      setLoading(true);
+
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/orders/${transaction_uuid}`,
+        {
+          paymentMethod: "Cash On Delivery",
+          paymentStatus: "Pending",
+          orderStatus: "Placed",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      alert("Order placed successfully.");
+
+      navigate("/payment-success", {
+        state: {
+          orderId: transaction_uuid,
+          paymentMethod: "Cash On Delivery",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.message ||
+          "Failed to place order."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-pink-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8">
+      <div className="w-full max-w-lg bg-white rounded-xl shadow-xl p-8">
 
         <h1 className="text-3xl font-bold text-center text-pink-600">
-          eSewa Payment
+          Payment
         </h1>
 
         <p className="text-center text-gray-500 mt-2">
-          Complete your payment securely
+          Choose your preferred payment method
         </p>
 
-        <div className="mt-8 bg-pink-50 rounded-lg p-4 border">
+        {/* Order Summary */}
+        <div className="mt-8 border rounded-lg p-5 bg-pink-50">
+
+          <div className="flex justify-between mb-3">
+            <span className="font-semibold">
+              Order ID
+            </span>
+
+            <span className="text-sm">
+              {transaction_uuid}
+            </span>
+          </div>
+
           <div className="flex justify-between">
-            <span className="font-semibold">Amount</span>
+            <span className="font-semibold">
+              Total Amount
+            </span>
+
             <span className="font-bold text-pink-600">
               Rs. {total_amount}
             </span>
           </div>
 
-          <div className="flex justify-between mt-3 text-sm">
-            <span>Order ID</span>
-            <span>{transaction_uuid}</span>
-          </div>
         </div>
 
-        <form
-          action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
-          method="POST"
-          className="mt-8"
-        >
-          <input
-            type="hidden"
-            name="amount"
-            value={total_amount}
-            readOnly
-          />
+        {/* Payment Methods */}
 
-          <input
-            type="hidden"
-            name="tax_amount"
-            value="0"
-            readOnly
-          />
+        <div className="mt-8">
 
-          <input
-            type="hidden"
-            name="total_amount"
-            value={total_amount}
-            readOnly
-          />
+          <h2 className="font-semibold text-lg mb-4">
+            Select Payment Method
+          </h2>
 
-          <input
-            type="hidden"
-            name="transaction_uuid"
-            value={transaction_uuid}
-            readOnly
-          />
+          <div className="space-y-4">
 
-          <input
-            type="hidden"
-            name="product_code"
-            value="EPAYTEST"
-            readOnly
-          />
+            <label className="flex items-center justify-between border rounded-lg p-4 cursor-pointer hover:border-pink-500 transition">
 
-          <input
-            type="hidden"
-            name="product_service_charge"
-            value="0"
-            readOnly
-          />
+              <div className="flex items-center gap-3">
 
-          <input
-            type="hidden"
-            name="product_delivery_charge"
-            value="0"
-            readOnly
-          />
+                <input
+                  type="radio"
+                  value="esewa"
+                  checked={paymentMethod === "esewa"}
+                  onChange={(e) =>
+                    setPaymentMethod(e.target.value)
+                  }
+                />
 
-          {/* CHANGE THIS TO YOUR DEPLOYED BACKEND */}
-          <input
-            type="hidden"
-            name="success_url"
-            value="https://fashion-ecommerce-react.onrender.com/api/orders/success"
-            readOnly
-          />
+                <div>
 
-          <input
-            type="hidden"
-            name="failure_url"
-            value="https://developer.esewa.com.np/failure"
-            readOnly
-          />
+                  <p className="font-semibold">
+                    eSewa
+                  </p>
 
-          <input
-            type="hidden"
-            name="signed_field_names"
-            value="total_amount,transaction_uuid,product_code"
-            readOnly
-          />
+                  <p className="text-sm text-gray-500">
+                    Secure online payment
+                  </p>
 
-          <input
-            type="hidden"
-            name="signature"
-            value={signature}
-            readOnly
-          />
+                </div>
+
+              </div>
+
+            </label>
+
+            <label className="flex items-center justify-between border rounded-lg p-4 cursor-pointer hover:border-pink-500 transition">
+
+              <div className="flex items-center gap-3">
+
+                <input
+                  type="radio"
+                  value="cod"
+                  checked={paymentMethod === "cod"}
+                  onChange={(e) =>
+                    setPaymentMethod(e.target.value)
+                  }
+                />
+
+                <div>
+
+                  <p className="font-semibold">
+                    Cash on Delivery
+                  </p>
+
+                  <p className="text-sm text-gray-500">
+                    Pay when your order arrives
+                  </p>
+
+                </div>
+
+              </div>
+
+            </label>
+
+          </div>
+
+        </div>
+
+        {/* eSewa Payment */}
+
+        {paymentMethod === "esewa" && (
+
+          <form
+            action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
+            method="POST"
+            className="mt-8"
+          >
+
+            <input
+              type="hidden"
+              name="amount"
+              value={total_amount}
+            />
+
+            <input
+              type="hidden"
+              name="tax_amount"
+              value="0"
+            />
+
+            <input
+              type="hidden"
+              name="total_amount"
+              value={total_amount}
+            />
+
+            <input
+              type="hidden"
+              name="transaction_uuid"
+              value={transaction_uuid}
+            />
+
+            <input
+              type="hidden"
+              name="product_code"
+              value="EPAYTEST"
+            />
+
+            <input
+              type="hidden"
+              name="product_service_charge"
+              value="0"
+            />
+
+            <input
+              type="hidden"
+              name="product_delivery_charge"
+              value="0"
+            />
+
+            <input
+              type="hidden"
+              name="success_url"
+              value="https://fashion-ecommerce-react.onrender.com/api/orders/success"
+            />
+
+            <input
+              type="hidden"
+              name="failure_url"
+              value="https://developer.esewa.com.np/failure"
+            />
+
+            <input
+              type="hidden"
+              name="signed_field_names"
+              value="total_amount,transaction_uuid,product_code"
+            />
+
+            <input
+              type="hidden"
+              name="signature"
+              value={signature}
+            />
+
+            <button
+              type="submit"
+              className="w-full mt-6 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-semibold transition"
+            >
+              Pay with eSewa
+            </button>
+
+          </form>
+
+        )}
+
+        {/* Cash on Delivery */}
+
+        {paymentMethod === "cod" && (
 
           <button
-            type="submit"
-            className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg font-semibold transition"
+            onClick={handleCashOnDelivery}
+            disabled={loading}
+            className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-60"
           >
-            Pay with eSewa
+            {loading
+              ? "Placing Order..."
+              : "Place Order"}
           </button>
-        </form>
+
+        )}
+
       </div>
     </div>
   );

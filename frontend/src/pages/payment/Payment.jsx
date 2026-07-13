@@ -35,7 +35,7 @@ const Payment = () => {
         {
           paymentMethod: "Cash On Delivery",
           paymentStatus: "PENDING",
-          orderStatus: "Placed",
+          orderStatus: "PLACED",
         },
         {
           withCredentials: true,
